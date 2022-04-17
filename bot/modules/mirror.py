@@ -314,6 +314,7 @@ def get_drive_id(update, context):
 
 def _mirror(update, context, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0):
     listed_drive(update, context)
+    sleep(3)
     message = update.message
     bot = context.bot
     mesg = message.text.split('\n')
