@@ -285,7 +285,36 @@ class MirrorListener:
         else:
             update_all_messages()
 
-def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0):
+drive = ["nxUpload", "hnUpload", "bzUpload", "lnUpload"]
+
+def listed_drive(update, context):
+    user_id = update.message.from_user.id
+    
+    buttons = button_build.ButtonMaker()
+    buttons.sbutton(drive[0], f"types 0")
+    buttons.sbutton(drive[1], f"types 1")
+    buttons.sbutton(drive[2], f"types 2")
+    buttons.sbutton(drive[3], f"types 3")
+    button = InlineKeyboardMarkup(buttons.build_menu(2))
+    sendMarkup('Choose option to upload.', context.bot, update, button)
+
+def get_drive_id(update, context):
+    query = update.callback_query
+    msg = query.message
+    data = query.data
+    data = data.split(" ")
+    if data[1] in [0,1,2,3]:
+        query.answer()
+        editMessage(f"<b>Uploading to <i>{drive[data[1]]}</i></b>", msg)
+        LOGGER.info(data[1])
+    else:
+        query.answer()
+        editMessage("Error", msg)
+
+def _mirror(update, context, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0):
+    listed_drive(update, context)
+    message = update.message
+    bot = context.bot
     mesg = message.text.split('\n')
     message_args = mesg[0].split(' ', maxsplit=1)
     name_args = mesg[0].split('|', maxsplit=1)
@@ -387,7 +416,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
         help_msg += "\n<code>/command</code> 10(number of links/files)"
         return sendMessage(help_msg, bot, message)
 
-    LOGGER.info(link)
+    LOGGER.info(link) 
 
     if not is_mega_link(link) and not isQbit and not is_magnet(link) \
         and not is_gdrive_link(link) and not link.endswith('.torrent'):
@@ -460,7 +489,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
 
 
 def mirror(update, context):
-    _mirror(context.bot, update.message)
+    _mirror(update, context)
 
 def unzip_mirror(update, context):
     _mirror(context.bot, update.message, extract=True)
@@ -519,8 +548,10 @@ qb_unzip_leech_handler = CommandHandler(BotCommands.QbUnzipLeechCommand, qb_unzi
                                 filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
 qb_zip_leech_handler = CommandHandler(BotCommands.QbZipLeechCommand, qb_zip_leech,
                                 filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
+drive_type_handler = CallbackQueryHandler(get_drive_id, pattern="types", run_async=True)
 
 dispatcher.add_handler(mirror_handler)
+dispatcher.add_handler(drive_type_handler)
 dispatcher.add_handler(unzip_mirror_handler)
 dispatcher.add_handler(zip_mirror_handler)
 dispatcher.add_handler(qb_mirror_handler)
