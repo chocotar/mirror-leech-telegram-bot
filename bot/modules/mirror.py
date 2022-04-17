@@ -488,7 +488,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
 
 def mirror(update, context):
     listed_drive(update, context)
-    _mirror(context.bot, update.message)
+    
 
 def unzip_mirror(update, context):
     _mirror(context.bot, update.message, extract=True)
