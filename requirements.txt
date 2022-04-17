@@ -11,7 +11,7 @@ google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
 gunicorn
-lk21
+lk21==1.6.0
 lxml
 pillow
 psutil
