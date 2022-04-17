@@ -289,8 +289,6 @@ class MirrorListener:
 drive = ["nxUpload", "hnUpload", "bzUpload", "lnUpload"]
 
 def listed_drive(update, context):
-    user_id = update.message.from_user.id
-    
     buttons = button_build.ButtonMaker()
     buttons.sbutton(drive[0], f"types 0")
     buttons.sbutton(drive[1], f"types 1")
