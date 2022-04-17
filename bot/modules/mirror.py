@@ -312,11 +312,7 @@ def get_drive_id(update, context):
         query.answer()
         editMessage("Error", msg)
 
-def _mirror(update, context, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0):
-    listed_drive(update, context)
-    sleep(3)
-    message = update.message
-    bot = context.bot
+def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0):
     mesg = message.text.split('\n')
     message_args = mesg[0].split(' ', maxsplit=1)
     name_args = mesg[0].split('|', maxsplit=1)
@@ -491,7 +487,8 @@ def _mirror(update, context, isZip=False, extract=False, isQbit=False, isLeech=F
 
 
 def mirror(update, context):
-    _mirror(update, context)
+    listed_drive(update, context)
+    _mirror(update.message, context.bot)
 
 def unzip_mirror(update, context):
     _mirror(context.bot, update.message, extract=True)
