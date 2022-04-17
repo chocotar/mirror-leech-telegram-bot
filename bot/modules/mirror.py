@@ -295,7 +295,7 @@ def listed_drive(update, context):
     buttons.sbutton(drive[2], f"types 2")
     buttons.sbutton(drive[3], f"types 3")
     button = InlineKeyboardMarkup(buttons.build_menu(2))
-    sendMarkup('Choose option to upload.', context.bot, update, button)
+    return sendMarkup('Choose option to upload.', context.bot, update, button)
 
 def get_drive_id(update, context):
     query = update.callback_query
