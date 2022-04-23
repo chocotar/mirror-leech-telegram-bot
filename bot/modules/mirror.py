@@ -305,6 +305,7 @@ def _mirror(bot, message, isDrive=False, isZip=False, extract=False, isQbit=Fals
             raise IndexError
         if isDrive:
            self.driveId = drive_id
+            LOGGER.info(drive_id)
     except:
         link = ''
     try:
