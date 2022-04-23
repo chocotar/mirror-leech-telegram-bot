@@ -73,7 +73,7 @@ class GoogleDriveHelper:
         self.alt_auth = False
         self.parent_id = driveId
 
-    parent_id = self.parent_id
+    parent_id = GoogleDriveHelper.parent_id
 
     def speed(self):
         """
