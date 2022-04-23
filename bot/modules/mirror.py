@@ -285,13 +285,18 @@ class MirrorListener:
         else:
             update_all_messages()
 
-def _mirror(bot, message, isDrive=False, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0):
+def _mirror(bot, message, isDrive=False, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0, isDrive=False):
     mesg = message.text.split('\n')
     message_args = mesg[0].split(' ', maxsplit=1)
     name_args = mesg[0].split('|', maxsplit=1)
     drive_id = mesg[0].split('+', maxsplit=1)
     qbitsel = False
     is_gdtot = False
+
+    if isDrive:
+        self.driveId = drive_id
+        LOGGER.info(drive_id)
+
     try:
         link = message_args[1]
         if link.startswith("s ") or link == "s":
@@ -303,9 +308,6 @@ def _mirror(bot, message, isDrive=False, isZip=False, extract=False, isQbit=Fals
             raise IndexError
         if link.startswith(("|", "pswd: ")):
             raise IndexError
-        if isDrive:
-           self.driveId = drive_id
-           LOGGER.info(drive_id)
     except:
         link = ''
     try:
