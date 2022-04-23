@@ -1,7 +1,6 @@
-from logging import getLogger, FileHandler, StreamHandler, INFO, basicConfig as log_Config, error as log_error, info as log_info, warning as log_warning
+from logging import getLogger, FileHandler, StreamHandler, INFO, basicConfig, error as log_error, info as log_info, warning as log_warning
 from socket import setdefaulttimeout
 from faulthandler import enable as faulthandler_enable
-
 from telegram.ext import Updater as tgUpdater
 from qbittorrentapi import Client as qbClient
 from aria2p import API as ariaAPI, Client as ariaClient
@@ -13,7 +12,6 @@ from time import sleep, time
 from threading import Thread, Lock
 from pyrogram import Client
 from dotenv import load_dotenv
-from bot.modules.mirror import MirrorListener
 
 faulthandler_enable()
 
@@ -21,7 +19,7 @@ setdefaulttimeout(600)
 
 botStartTime = time()
 
-log_Config(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     handlers=[FileHandler('log.txt'), StreamHandler()],
                     level=INFO)
 
@@ -31,8 +29,6 @@ load_dotenv('config.env', override=True)
 
 def getConfig(name: str):
     return environ[name]
-
-get_drive_index = MirrorListener.driveId
 
 try:
     NETRC_URL = getConfig('NETRC_URL')
@@ -141,8 +137,7 @@ except:
     pass
 try:
     BOT_TOKEN = getConfig('BOT_TOKEN')
-    get_drive_id = getConfig('GDRIVE_FOLDER_ID')
-    parent_id = get_drive_id[get_drive_index]
+    parent_id = getConfig('GDRIVE_FOLDER_ID')
     DOWNLOAD_DIR = getConfig('DOWNLOAD_DIR')
     if not DOWNLOAD_DIR.endswith("/"):
         DOWNLOAD_DIR = DOWNLOAD_DIR + '/'
