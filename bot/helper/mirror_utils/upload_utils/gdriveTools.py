@@ -26,8 +26,6 @@ from bot.helper.ext_utils.telegraph_helper import telegraph
 from bot.helper.ext_utils.bot_utils import get_readable_file_size, setInterval
 from bot.helper.ext_utils.fs_utils import get_mime_type, get_path_size
 from bot.helper.ext_utils.shortenurl import short_url
-from bot.modules.mirror import MirrorListener
-from bot import parent_id as driveId
 
 LOGGER = getLogger(__name__)
 getLogger('googleapiclient.discovery').setLevel(ERROR)
@@ -39,7 +37,7 @@ parent_id = driveId[MirrorListener.driveId]
 
 class GoogleDriveHelper:
 
-    def __init__(self, name=None, listener=None):
+    def __init__(self, name=None, driveId=0, listener=None):
         self.__G_DRIVE_TOKEN_FILE = "token.pickle"
         # Check https://developers.google.com/drive/scopes for all available scopes
         self.__OAUTH_SCOPE = ['https://www.googleapis.com/auth/drive']
@@ -75,6 +73,9 @@ class GoogleDriveHelper:
         self.transferred_size = 0
         self.__sa_count = 0
         self.alt_auth = False
+        self.parent_id = driveId
+
+    parent_id = self.parent_id
 
     def speed(self):
         """
