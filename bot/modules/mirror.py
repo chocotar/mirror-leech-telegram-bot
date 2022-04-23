@@ -286,6 +286,7 @@ class MirrorListener:
 
 def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0):
     mesg = message.text.split('\n')
+    LOGGER.info(mesg)
     message_args = mesg[0].split(' ', maxsplit=1)
     name_args = mesg[0].split('|', maxsplit=1)
     qbitsel = False
