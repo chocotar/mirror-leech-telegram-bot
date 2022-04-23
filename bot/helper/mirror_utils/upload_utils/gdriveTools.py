@@ -33,8 +33,6 @@ getLogger('googleapiclient.discovery').setLevel(ERROR)
 if USE_SERVICE_ACCOUNTS:
     SERVICE_ACCOUNT_INDEX = randrange(len(listdir("accounts")))
 
-parent_id = driveId[MirrorListener.driveId]
-
 class GoogleDriveHelper:
 
     def __init__(self, name=None, driveId=0, listener=None):
