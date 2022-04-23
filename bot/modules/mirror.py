@@ -48,6 +48,7 @@ class MirrorListener:
         self.isLeech = isLeech
         self.pswd = pswd
         self.tag = tag
+        self.driveId = None
 
     def clean(self):
         try:
@@ -284,11 +285,11 @@ class MirrorListener:
         else:
             update_all_messages()
 
-def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0):
+def _mirror(bot, message, isDrive=False, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0):
     mesg = message.text.split('\n')
-    LOGGER.info(mesg)
     message_args = mesg[0].split(' ', maxsplit=1)
     name_args = mesg[0].split('|', maxsplit=1)
+    drive_id = mesg[0].split('+', maxsplit=1)
     qbitsel = False
     is_gdtot = False
     try:
@@ -302,6 +303,8 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
             raise IndexError
         if link.startswith(("|", "pswd: ")):
             raise IndexError
+        if isDrive:
+           self.driveId = drive_id
     except:
         link = ''
     try:
@@ -464,6 +467,9 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
 
 def mirror(update, context):
     _mirror(context.bot, update.message)
+    
+def driveMirror(update, context):
+    _mirror(context.bot, update.message, isDrive=True)
 
 def unzip_mirror(update, context):
     _mirror(context.bot, update.message, extract=True)
@@ -500,6 +506,8 @@ def qb_zip_leech(update, context):
 
 mirror_handler = CommandHandler(BotCommands.MirrorCommand, mirror,
                                 filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
+dmirror_handler = CommandHandler('dmirror', driveMirror,
+                                filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
 unzip_mirror_handler = CommandHandler(BotCommands.UnzipMirrorCommand, unzip_mirror,
                                 filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
 zip_mirror_handler = CommandHandler(BotCommands.ZipMirrorCommand, zip_mirror,
@@ -535,3 +543,4 @@ dispatcher.add_handler(zip_leech_handler)
 dispatcher.add_handler(qb_leech_handler)
 dispatcher.add_handler(qb_unzip_leech_handler)
 dispatcher.add_handler(qb_zip_leech_handler)
+dispatcher.add_handler(dmirror_handler)
