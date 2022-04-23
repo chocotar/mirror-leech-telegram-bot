@@ -13,6 +13,7 @@ from time import sleep, time
 from threading import Thread, Lock
 from pyrogram import Client
 from dotenv import load_dotenv
+from bot.modules.mirror import MirrorListener
 
 faulthandler_enable()
 
@@ -30,6 +31,8 @@ load_dotenv('config.env', override=True)
 
 def getConfig(name: str):
     return environ[name]
+
+get_drive_index = MirrorListener.driveId
 
 try:
     NETRC_URL = getConfig('NETRC_URL')
@@ -138,7 +141,8 @@ except:
     pass
 try:
     BOT_TOKEN = getConfig('BOT_TOKEN')
-    parent_id = getConfig('GDRIVE_FOLDER_ID')
+    get_drive_id = getConfig('GDRIVE_FOLDER_ID')
+    parent_id = get_drive_id[get_drive_index]
     DOWNLOAD_DIR = getConfig('DOWNLOAD_DIR')
     if not DOWNLOAD_DIR.endswith("/"):
         DOWNLOAD_DIR = DOWNLOAD_DIR + '/'
