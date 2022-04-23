@@ -35,6 +35,7 @@ getLogger('googleapiclient.discovery').setLevel(ERROR)
 if USE_SERVICE_ACCOUNTS:
     SERVICE_ACCOUNT_INDEX = randrange(len(listdir("accounts")))
 
+parent_id = driveId[MirrorListener.driveId]
 
 class GoogleDriveHelper:
 
@@ -74,8 +75,6 @@ class GoogleDriveHelper:
         self.transferred_size = 0
         self.__sa_count = 0
         self.alt_auth = False
-
-    parent_id = driveId[MirrorListener.driveId]
 
     def speed(self):
         """
