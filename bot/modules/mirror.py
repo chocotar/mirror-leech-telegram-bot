@@ -293,11 +293,14 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
     qbitsel = False
     is_gdtot = False
 
-    if isDrive:
-        driveId = int(drive_id[1])
-        LOGGER.info(driveId)
-    else:
-        driveId = None
+    try:
+        if isDrive and isinstance(int(drive_id[1])):
+            driveId = int(drive_id[1])
+            LOGGER.info(driveId)
+    except:
+        driveId=None
+        help_msg = "<b>Send drive id with Number</b>"
+        return sendMessage(help_msg, bot, message)
 
     try:
         link = message_args[1]
