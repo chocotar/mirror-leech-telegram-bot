@@ -295,7 +295,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
 
     if isDrive:
         driveId = drive_id
-        LOGGGER.info(drive_id)
+        LOGGER.info(drive_id)
     else:
         driveId = None
 
