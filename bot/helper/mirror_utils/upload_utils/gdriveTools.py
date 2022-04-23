@@ -1,13 +1,12 @@
 from logging import getLogger, ERROR, DEBUG
 from time import time, sleep
-
 from pickle import load as pload, dump as pdump
 from json import loads as jsnloads
 from os import makedirs, path as ospath, listdir
 from urllib.parse import parse_qs, urlparse
 from requests.utils import quote as rquote
 from io import FileIO
-from re import search
+from re import search as re_search
 from random import randrange
 from google.auth.transport.requests import Request
 from google.oauth2 import service_account
@@ -26,12 +25,16 @@ from bot.helper.ext_utils.telegraph_helper import telegraph
 from bot.helper.ext_utils.bot_utils import get_readable_file_size, setInterval
 from bot.helper.ext_utils.fs_utils import get_mime_type, get_path_size
 from bot.helper.ext_utils.shortenurl import short_url
+from bot import parent_id as p
 
 LOGGER = getLogger(__name__)
 getLogger('googleapiclient.discovery').setLevel(ERROR)
 
+parent_id = p[0]
+
 if USE_SERVICE_ACCOUNTS:
     SERVICE_ACCOUNT_INDEX = randrange(len(listdir("accounts")))
+
 
 class GoogleDriveHelper:
 
@@ -73,8 +76,6 @@ class GoogleDriveHelper:
         self.alt_auth = False
         self.parent_id = driveId
 
-    parent_id = GoogleDriveHelper.parent_id
-
     def speed(self):
         """
         It calculates the average upload speed and returns it in bytes/seconds unit
@@ -101,7 +102,7 @@ class GoogleDriveHelper:
     def __getIdFromUrl(link: str):
         if "folders" in link or "file" in link:
             regex = r"https://drive\.google\.com/(drive)?/?u?/?\d?/?(mobile)?/?(file)?(folders)?/?d?/([-\w]+)[?+]?/?(w+)?"
-            res = search(regex,link)
+            res = re_search(regex,link)
             if res is None:
                 raise IndexError("G-Drive ID not found.")
             return res.group(5)
@@ -241,7 +242,7 @@ class GoogleDriveHelper:
         try:
             if ospath.isfile(file_path):
                 mime_type = get_mime_type(file_path)
-                link = self.__upload_file(file_path, file_name, mime_type, parent_id)
+                link = self.__upload_file(file_path, file_name, mime_type, self.parent_id)
                 if self.is_cancelled:
                     return
                 if link is None:
@@ -249,7 +250,7 @@ class GoogleDriveHelper:
                 LOGGER.info("Uploaded To G-Drive: " + file_path)
             else:
                 mime_type = 'Folder'
-                dir_id = self.__create_directory(ospath.basename(ospath.abspath(file_name)), parent_id)
+                dir_id = self.__create_directory(ospath.basename(ospath.abspath(file_name)), self.parent_id)
                 result = self.__upload_dir(file_path, dir_id)
                 if result is None:
                     raise Exception('Upload has been manually cancelled!')
@@ -353,14 +354,15 @@ class GoogleDriveHelper:
             meta = self.__getFileMetadata(file_id)
             mime_type = meta.get("mimeType")
             if mime_type == self.__G_DRIVE_DIR_MIME_TYPE:
-                dir_id = self.__create_directory(meta.get('name'), parent_id)
+                dir_id = self.__create_directory(meta.get('name'), self.parent_id)
                 self.__cloneFolder(meta.get('name'), meta.get('name'), meta.get('id'), dir_id)
                 durl = self.__G_DRIVE_DIR_BASE_DOWNLOAD_URL.format(dir_id)
                 if self.is_cancelled:
                     LOGGER.info("Deleting cloned data from Drive...")
                     self.deletefile(durl)
                     return "your clone has been stopped and cloned data has been deleted!", "cancelled"
-                msg += f'<b>Name: </b><code>{meta.get("name")}</code>\n\n<b>Size: </b>{get_readable_file_size(self.transferred_size)}'
+                msg += f'<b>Name: </b><code>{meta.get("name")}</code>'
+                msg += f'\n\n<b>Size: </b>{get_readable_file_size(self.transferred_size)}'
                 msg += '\n\n<b>Type: </b>Folder'
                 msg += f'\n<b>SubFolders: </b>{self.__total_folders}'
                 msg += f'\n<b>Files: </b>{self.__total_files}'
@@ -373,7 +375,7 @@ class GoogleDriveHelper:
                     url = short_url(url)
                     buttons.buildbutton("⚡ Index Link", url)
             else:
-                file = self.__copyFile(meta.get('id'), parent_id)
+                file = self.__copyFile(meta.get('id'), self.parent_id)
                 msg += f'<b>Name: </b><code>{file.get("name")}</code>'
                 durl = self.__G_DRIVE_BASE_DOWNLOAD_URL.format(file.get("id"))
                 buttons = ButtonMaker()
@@ -481,18 +483,8 @@ class GoogleDriveHelper:
             if ospath.exists(self.__G_DRIVE_TOKEN_FILE):
                 with open(self.__G_DRIVE_TOKEN_FILE, 'rb') as f:
                     credentials = pload(f)
-            if credentials is None or not credentials.valid:
-                if credentials and credentials.expired and credentials.refresh_token:
-                    credentials.refresh(Request())
-                else:
-                    flow = InstalledAppFlow.from_client_secrets_file(
-                        'credentials.json', self.__OAUTH_SCOPE)
-                    LOGGER.info(flow)
-                    credentials = flow.run_console(port=0)
-
-                # Save the credentials for the next run
-                with open(self.__G_DRIVE_TOKEN_FILE, 'wb') as token:
-                    pdump(credentials, token)
+            else:
+                LOGGER.error('token.pickle not found!')
         else:
             LOGGER.info(f"Authorizing with {SERVICE_ACCOUNT_INDEX}.json service account")
             credentials = service_account.Credentials.from_service_account_file(
@@ -508,17 +500,6 @@ class GoogleDriveHelper:
                 LOGGER.info("Authorize with token.pickle")
                 with open(self.__G_DRIVE_TOKEN_FILE, 'rb') as f:
                     credentials = pload(f)
-                if credentials is None or not credentials.valid:
-                    if credentials and credentials.expired and credentials.refresh_token:
-                        credentials.refresh(Request())
-                    else:
-                        flow = InstalledAppFlow.from_client_secrets_file(
-                            'credentials.json', self.__OAUTH_SCOPE)
-                        LOGGER.info(flow)
-                        credentials = flow.run_console(port=0)
-                    # Save the credentials for the next run
-                    with open(self.__G_DRIVE_TOKEN_FILE, 'wb') as token:
-                        pdump(credentials, token)
                 return build('drive', 'v3', credentials=credentials, cache_discovery=False)
         return None
 
@@ -632,12 +613,12 @@ class GoogleDriveHelper:
             token_service = self.__alt_authorize()
             if token_service is not None:
                 self.__service = token_service
-        for index, parent_id in enumerate(DRIVES_IDS):
-            if isRecursive and len(parent_id) > 23:
+        for index, self.parent_id in enumerate(DRIVES_IDS):
+            if isRecursive and len(self.parent_id) > 23:
                 isRecur = False
             else:
                 isRecur = isRecursive
-            response = self.__drive_query(parent_id, fileName, stopDup, isRecur, itemType)
+            response = self.__drive_query(self.parent_id, fileName, stopDup, isRecur, itemType)
             if not response["files"] and noMulti:
                 break
             elif not response["files"]:
@@ -656,7 +637,7 @@ class GoogleDriveHelper:
                     msg += f"<b><a href={furl}>Drive Link</a></b>"
                     if INDEX_URLS[index] is not None:
                         if isRecur:
-                            url_path = "/".join([rquote(n, safe='') for n in self.__get_recursive_list(file, parent_id)])
+                            url_path = "/".join([rquote(n, safe='') for n in self.__get_recursive_list(file, self.parent_id)])
                         else:
                             url_path = rquote(f'{file.get("name")}', safe='')
                         url = f'{INDEX_URLS[index]}/{url_path}/'
@@ -675,7 +656,7 @@ class GoogleDriveHelper:
                         if isRecur:
                             url_path = "/".join(
                                 rquote(n, safe='')
-                                for n in self.__get_recursive_list(file, parent_id)
+                                for n in self.__get_recursive_list(file, self.parent_id)
                             )
 
                         else:
