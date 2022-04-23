@@ -38,7 +38,7 @@ from bot.helper.telegram_helper.button_build import ButtonMaker
 
 
 class MirrorListener:
-    def __init__(self, bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, tag=None):
+    def __init__(self, bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, tag=None, driveId=None):
         self.bot = bot
         self.message = message
         self.uid = self.message.message_id
@@ -48,7 +48,7 @@ class MirrorListener:
         self.isLeech = isLeech
         self.pswd = pswd
         self.tag = tag
-        self.driveId = None
+        self.driveId = driveId
 
     def clean(self):
         try:
@@ -294,8 +294,9 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
     is_gdtot = False
 
     if isDrive:
-        self.driveId = drive_id
-        LOGGER.info(drive_id)
+        driveId = drive_id
+    else:
+        driveId = None
 
     try:
         link = message_args[1]
@@ -433,7 +434,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
             msg = "Qb commands for torrents only. if you are trying to dowload torrent then report."
             return sendMessage(msg, bot, message)
 
-    listener = MirrorListener(bot, message, isZip, extract, isQbit, isLeech, pswd, tag)
+    listener = MirrorListener(bot, message, isZip, extract, isQbit, isLeech, pswd, tag, driveId)
 
     if is_gdrive_link(link):
         if not isZip and not extract and not isLeech:
