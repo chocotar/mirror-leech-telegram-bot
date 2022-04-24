@@ -297,7 +297,6 @@ def _mirror(self, bot, message, isZip=False, extract=False, isQbit=False, isLeec
     try:
         if isDrive and isinstance(int(drive_id[1]), int):
             driveId = int(drive_id[1])
-            self.driveId = driveId
     except:
         driveId=None
         help_msg = "<b>Send drive id with Number</b>"
