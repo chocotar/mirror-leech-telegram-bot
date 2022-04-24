@@ -38,7 +38,7 @@ from bot.helper.telegram_helper.button_build import ButtonMaker
 
 
 class MirrorListener:
-    def __init__(self, bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, tag=None, driveId=None):
+    def __init__(self, bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, tag=None, driveId=0):
         self.bot = bot
         self.message = message
         self.uid = self.message.message_id
