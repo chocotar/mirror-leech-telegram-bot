@@ -26,7 +26,7 @@ def _clone(message, bot, multi=0):
         if drive_id[1] and isinstance(int(drive_id[1]), int):
             driveId = int(drive_id[1])
             LOGGER.info('True')
-        if not drive_id[1] and not isinstance(int(drive_id[1]), int)::
+        if not (drive_id[1] and isinstance(int(drive_id[1]), int)):
             LOGGER.info('False')
             driveId=0
     except:
