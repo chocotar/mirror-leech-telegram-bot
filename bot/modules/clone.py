@@ -14,12 +14,23 @@ from bot import dispatcher, LOGGER, CLONE_LIMIT, STOP_DUPLICATE, download_dict, 
 from bot.helper.ext_utils.bot_utils import get_readable_file_size, is_gdrive_link, is_gdtot_link, new_thread
 from bot.helper.mirror_utils.download_utils.direct_link_generator import gdtot
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
+from bot import parent_id
 
 
-def _clone(message, bot, multi=0):
+def _clone(message, bot, multi=0, isDrive=False):
     args = message.text.split(" ", maxsplit=1)
+    drive_id = args[0].split('+', maxsplit=1)
     reply_to = message.reply_to_message
     link = ''
+    try:
+        if isDrive and isinstance(int(drive_id[1]), int):
+            driveId = int(drive_id[1])
+        else:
+            driveId=0
+    except:
+        help_msg = "<b>Send drive id with Number</b>"
+        return sendMessage(help_msg, bot, message)
+
     if len(args) > 1:
         link = args[1]
         if link.isdigit():
@@ -71,7 +82,7 @@ def _clone(message, bot, multi=0):
             Thread(target=_clone, args=(nextmsg, bot, multi)).start()
         if files <= 20:
             msg = sendMessage(f"Cloning: <code>{link}</code>", bot, message)
-            result, button = gd.clone(link)
+            result, button = gd.clone(link, parent_id[driveId])
             deleteMessage(bot, msg)
         else:
             drive = GoogleDriveHelper(name)
@@ -80,7 +91,7 @@ def _clone(message, bot, multi=0):
             with download_dict_lock:
                 download_dict[message.message_id] = clone_status
             sendStatusMessage(message, bot)
-            result, button = drive.clone(link)
+            result, button = drive.clone(link, parent_id[driveId])
             with download_dict_lock:
                 del download_dict[message.message_id]
                 count = len(download_dict)
