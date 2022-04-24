@@ -338,7 +338,7 @@ class GoogleDriveHelper:
                 break
         return files
 
-    def clone(self, link):
+    def clone(self, link, driveId=p[0]):
         self.is_cloning = True
         self.start_time = time()
         self.__total_files = 0
@@ -354,7 +354,7 @@ class GoogleDriveHelper:
             meta = self.__getFileMetadata(file_id)
             mime_type = meta.get("mimeType")
             if mime_type == self.__G_DRIVE_DIR_MIME_TYPE:
-                dir_id = self.__create_directory(meta.get('name'), self.parent_id)
+                dir_id = self.__create_directory(meta.get('name'), driveId)
                 self.__cloneFolder(meta.get('name'), meta.get('name'), meta.get('id'), dir_id)
                 durl = self.__G_DRIVE_DIR_BASE_DOWNLOAD_URL.format(dir_id)
                 if self.is_cancelled:
@@ -375,7 +375,7 @@ class GoogleDriveHelper:
                     url = short_url(url)
                     buttons.buildbutton("⚡ Index Link", url)
             else:
-                file = self.__copyFile(meta.get('id'), self.parent_id)
+                file = self.__copyFile(meta.get('id'), driveId)
                 msg += f'<b>Name: </b><code>{file.get("name")}</code>'
                 durl = self.__G_DRIVE_BASE_DOWNLOAD_URL.format(file.get("id"))
                 buttons = ButtonMaker()
