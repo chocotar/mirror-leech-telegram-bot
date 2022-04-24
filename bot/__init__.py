@@ -483,7 +483,7 @@ except:
     pass
 
 DRIVES_NAMES.append("Main")
-DRIVES_IDS.append(parent_id)
+DRIVES_IDS.append(parent_id[0])
 if ospath.exists('drive_folder'):
     with open('drive_folder', 'r+') as f:
         lines = f.readlines()
