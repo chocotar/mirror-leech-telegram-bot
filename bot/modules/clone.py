@@ -23,15 +23,15 @@ def _clone(message, bot, multi=0):
     reply_to = message.reply_to_message
     link = ''
     try:
-        if drive_id and isinstance(int(drive_id[1]), int):
+        if drive_id[1] and isinstance(int(drive_id[1]), int):
             driveId = int(drive_id[1])
             LOGGER.info('True')
-        else:
+        if not drive_id[1] and not isinstance(int(drive_id[1]), int)::
             LOGGER.info('False')
             driveId=0
     except:
-        help_msg = "<b>Send drive id with Number</b>"
-        return sendMessage(help_msg, bot, message)
+        LOGGER.info('Id invalid')
+        pass
 
     if len(args) > 1:
         link = args[1]
