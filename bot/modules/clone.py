@@ -26,14 +26,9 @@ def _clone(message, bot, multi=0):
         if drive_id[1] and isinstance(int(drive_id[1]), int):
             driveId = int(drive_id[1])
             LOGGER.info('True')
-        if drive_id[1]:
-            if isinstance(drive_id[1], str):
-                help_msg = "<b>Send drive id with Number</b>"
-                return sendMessage(help_msg, bot, message)
-        else:
-            LOGGER.info('False')
-            driveId=0
     except:
+        help_msg = "<b>Id Invalid, Uploading to default Drive</b>"
+        sendMessage(help_msg, bot, message)
         LOGGER.info('Id invalid')
         driveId=0
         pass
