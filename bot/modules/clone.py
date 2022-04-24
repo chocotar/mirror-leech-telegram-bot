@@ -20,13 +20,14 @@ from bot import parent_id
 def _clone(message, bot, multi=0, isDrive=False):
     args = message.text.split(" ", maxsplit=1)
     drive_id = args[1].split('+', maxsplit=1)
-    LOGGER.info(drive_id[1])
     reply_to = message.reply_to_message
     link = ''
     try:
         if isDrive and isinstance(int(drive_id[1]), int):
             driveId = int(drive_id[1])
+            LOGGER.info('True')
         else:
+            LOGGER.info('False')
             driveId=0
     except:
         help_msg = "<b>Send drive id with Number</b>"
