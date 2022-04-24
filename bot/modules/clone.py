@@ -26,11 +26,16 @@ def _clone(message, bot, multi=0):
         if drive_id[1] and isinstance(int(drive_id[1]), int):
             driveId = int(drive_id[1])
             LOGGER.info('True')
-        if not (drive_id[1] and isinstance(int(drive_id[1]), int)):
+        if drive_id[1]:
+            if not isinstance(int(drive_id[1]):
+                help_msg = "<b>Send drive id with Number</b>"
+                return sendMessage(help_msg, bot, message)
+        else:
             LOGGER.info('False')
             driveId=0
     except:
         LOGGER.info('Id invalid')
+        driveId=0
         pass
 
     if len(args) > 1:
