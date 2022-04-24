@@ -38,7 +38,7 @@ if USE_SERVICE_ACCOUNTS:
 
 class GoogleDriveHelper:
 
-    def __init__(self, name=None, driveId=0, listener=None):
+    def __init__(self, name=None, driveId=parent_id, listener=None):
         self.__G_DRIVE_TOKEN_FILE = "token.pickle"
         # Check https://developers.google.com/drive/scopes for all available scopes
         self.__OAUTH_SCOPE = ['https://www.googleapis.com/auth/drive']
