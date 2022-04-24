@@ -17,13 +17,13 @@ from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 from bot import parent_id
 
 
-def _clone(message, bot, multi=0, isDrive=False):
+def _clone(message, bot, multi=0):
     args = message.text.split(" ", maxsplit=1)
     drive_id = args[1].split('+', maxsplit=1)
     reply_to = message.reply_to_message
     link = ''
     try:
-        if isDrive and isinstance(int(drive_id[1]), int):
+        if isinstance(int(drive_id[1]), int):
             driveId = int(drive_id[1])
             LOGGER.info('True')
         else:
