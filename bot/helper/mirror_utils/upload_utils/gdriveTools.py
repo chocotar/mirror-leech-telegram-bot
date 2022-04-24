@@ -605,6 +605,7 @@ class GoogleDriveHelper:
             return {'files': []}
 
     def drive_list(self, fileName, stopDup=False, noMulti=False, isRecursive=True, itemType=""):
+        DRIVES_IDS = parent_id
         msg = ""
         fileName = self.__escapes(str(fileName))
         contents_count = 0
