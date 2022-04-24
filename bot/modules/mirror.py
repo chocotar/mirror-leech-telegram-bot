@@ -161,6 +161,7 @@ class MirrorListener:
         else:
             size = get_path_size(up_path)
             LOGGER.info(f"Upload Name: {up_name}")
+            LOGGER.info(parent_id[self.driveId])
             drive = GoogleDriveHelper(up_name, parent_id[self.driveId], self)
             upload_status = UploadStatus(drive, size, gid, self)
             with download_dict_lock:
@@ -296,7 +297,6 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
     try:
         if isDrive and isinstance(int(drive_id[1]), int):
             driveId = int(drive_id[1])
-            LOGGER.info(driveId)
     except:
         driveId=None
         help_msg = "<b>Send drive id with Number</b>"
