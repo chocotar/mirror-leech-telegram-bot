@@ -20,7 +20,7 @@ from bot import parent_id
 def _clone(message, bot, multi=0, isDrive=False):
     args = message.text.split(" ", maxsplit=1)
     drive_id = args[1].split('+', maxsplit=1)
-    LOGGER.info(drive_id)
+    LOGGER.info(drive_id[1])
     reply_to = message.reply_to_message
     link = ''
     try:
