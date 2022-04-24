@@ -439,7 +439,7 @@ def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=Fals
             msg = "Qb commands for torrents only. if you are trying to dowload torrent then report."
             return sendMessage(msg, bot, message)
 
-    listener = MirrorListener(bot, message, isZip, extract, isQbit, isLeech, pswd, tag, isDrive)
+    listener = MirrorListener(bot, message, isZip, extract, isQbit, isLeech, pswd, tag, driveId)
 
     if is_gdrive_link(link):
         if not isZip and not extract and not isLeech:
