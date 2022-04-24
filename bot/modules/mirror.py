@@ -286,7 +286,7 @@ class MirrorListener:
         else:
             update_all_messages()
 
-def _mirror(self, bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0, isDrive=False):
+def _mirror(bot, message, isZip=False, extract=False, isQbit=False, isLeech=False, pswd=None, multi=0, isDrive=False):
     mesg = message.text.split('\n')
     message_args = mesg[0].split(' ', maxsplit=1)
     name_args = mesg[0].split('|', maxsplit=1)
